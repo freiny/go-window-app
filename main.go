@@ -17,12 +17,26 @@ var img1, img2 *image.RGBA
 
 // var installPath = "/Applications/GoWindow.app/Contents/Resources/"
 
-var k1, _ = gw.GetImage("k1.png")
-var k2, _ = gw.GetImage("k2.png")
+var k1 *image.RGBA
+var k2 *image.RGBA
 
 // var k2, _ = gw.GetImagePart("k2.png", image.Point{64, 64})
 
 func main() {
+	// fmt.Println(path)
+
+	var isProduction = true
+	resPath := ""
+
+	if isProduction {
+		resPath = "/Applications/gwApp.app/Contents/Resources/"
+	} else {
+		resPath = "Resources/"
+	}
+
+	k1, _ = gw.GetImage(resPath + "k1.png")
+	k2, _ = gw.GetImage(resPath + "k2.png")
+
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	// cfg.Width = 1280
@@ -49,16 +63,6 @@ func onFPS(fps int) {
 
 }
 
-// func onKey(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
-// 	if action == 1 {
-// 		fmt.Print(string(key), " DOWN")
-//
-// 	}
-//
-// 	if action == 0 {
-// 		fmt.Print(string(key), " UP")
-// 	}
-// }
 func onKey(w *gw.Window) {
 	fmt.Println("Key Pressed...")
 	fmt.Println(w.GetSize())
@@ -71,7 +75,6 @@ func onCursorMove(xPos float64, yPos float64) {
 	// fmt.Println("CURSOR: ", xCursor, yCursor)
 }
 
-// var trgba =
 var r = 0
 
 func onRender() *image.RGBA {
