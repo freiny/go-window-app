@@ -15,27 +15,19 @@ var cb = gw.Callbacks{}
 
 var img1, img2 *image.RGBA
 
-// var installPath = "/Applications/GoWindow.app/Contents/Resources/"
-
-var k1 *image.RGBA
-var k2 *image.RGBA
-
-// var k2, _ = gw.GetImagePart("k2.png", image.Point{64, 64})
-
 func main() {
-	// fmt.Println(path)
 
-	var isProduction = true
+	var isProduction = false
+
 	resPath := ""
-
 	if isProduction {
 		resPath = "/Applications/gwApp.app/Contents/Resources/"
 	} else {
 		resPath = "Resources/"
 	}
 
-	k1, _ = gw.GetImage(resPath + "k1.png")
-	k2, _ = gw.GetImage(resPath + "k2.png")
+	img1, _ = gw.GetImage(resPath + "k1.png")
+	img2, _ = gw.GetImage(resPath + "k2.png")
 
 	rand.Seed(time.Now().UTC().UnixNano())
 
@@ -51,10 +43,10 @@ func main() {
 	cb.CursorMove = onCursorMove
 	cb.FPS = onFPS
 
-	img1 = gw.RandomImage(image.Point{cfg.Width, cfg.Height})
-	img2 = gw.RandomImage(image.Point{cfg.Width, cfg.Height})
+	// img1 = gw.RandomImage(image.Point{cfg.Width, cfg.Height})
+	// img2 = gw.RandomImage(image.Point{cfg.Width, cfg.Height})
 
-	gw.SetDebug()
+	// gw.SetDebug()
 	gw.Init(cfg, cb)
 }
 
@@ -63,9 +55,12 @@ func onFPS(fps int) {
 
 }
 
-func onKey(w *gw.Window) {
-	fmt.Println("Key Pressed...")
-	fmt.Println(w.GetSize())
+func onKey(w *gw.Window, key gw.Key, scancode int, action gw.Action, mods gw.ModifierKey) {
+
+	if action == 1 {
+		fmt.Print(w.GetSize())
+		fmt.Println(" : ", string(key), scancode, action, mods)
+	}
 }
 
 var xCursor, yCursor float64
@@ -82,13 +77,13 @@ func onRender() *image.RGBA {
 	// xCur, yCur := int(xCursor), int(yCursor)
 	var rgba = image.NewRGBA(image.Rect(0, 0, cfg.Width, cfg.Height))
 	if gw.Toggle() {
-		rgba = k1
+		rgba = img1
 		// rgba = gw.RandomImage(image.Point{cfg.Width, cfg.Height})
 		// rgba = gw.ClearImage(rgba, color.RGBA{255, 0, 0, 255})
 		// rgba, _ = gw.GetImage("black.png")
 
 	} else {
-		rgba = k2
+		rgba = img2
 		// Hw()
 		// var a image.RGBA
 		// rgba = gw.RandomImage(image.Point{cfg.Width, cfg.Height})
