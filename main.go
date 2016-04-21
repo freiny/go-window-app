@@ -44,10 +44,10 @@ func main() {
 		Y: 0,
 	}
 	g.cb = gw.Callbacks{
-		// Render: onRender,
-		// CursorMove: onCursorMove,
+		Render:     onRender,
+		CursorMove: onCursorMove,
 		// Key:        onKey,
-		FPS: onFPS,
+		// FPS: onFPS,
 	}
 
 	gw.SetDebug()
