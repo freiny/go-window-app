@@ -12,8 +12,8 @@ import (
 
 // Global variables relative to user application
 type Global struct {
-	wc   gw.WinConfig
-	cb   gw.Callbacks
+	wc gw.WinConfig
+	// cb   gw.Callbacks
 	cur  gw.Cursor
 	img1 *image.RGBA
 	img2 *image.RGBA
@@ -43,15 +43,14 @@ func main() {
 		X: 0,
 		Y: 0,
 	}
-	g.cb = gw.Callbacks{
-		Render:     onRender,
-		CursorMove: onCursorMove,
-		// Key:        onKey,
-		// FPS: onFPS,
-	}
+
+	gw.RegisterCallback("render", onRender)
+	gw.RegisterCallback("cursorMove", onCursorMove)
+	gw.RegisterCallback("key", onKey)
+	gw.RegisterCallback("fps", onFPS)
 
 	gw.SetDebug()
-	gw.Init(g.wc, g.cb)
+	gw.Init(g.wc)
 }
 
 func onFPS(fps int) {
@@ -72,6 +71,7 @@ func onCursorMove(c gw.Cursor) {
 }
 
 func onRender() *image.RGBA {
+	// fmt.Println("rendering")
 
 	// xCur, yCur := int(xCursor), int(yCursor)
 	var rgba = image.NewRGBA(image.Rect(0, 0, g.wc.W, g.wc.Y))
