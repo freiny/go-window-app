@@ -7,58 +7,49 @@ import (
 	"math/rand"
 	"time"
 
-	gw "github.com/freiny/go-window"
+	glgw "github.com/freiny/go-window"
 )
 
-// Global variables relative to user application
-type Global struct {
-	wc gw.WinConfig
+var dbg = glgw.Debugger{}.Init()
+
+var g = struct {
+	wc glgw.WinConfig
 	// cb   gw.Callbacks
-	cur  gw.Cursor
+	cur  glgw.Cursor
 	img1 *image.RGBA
 	img2 *image.RGBA
+}{
+	img1: gw.GetImage(gw.GetResourcePath() + "k1.png"),
+	img2: gw.GetImage(gw.GetResourcePath() + "k2.png"),
 }
 
-var g = Global{}
+var gw = glgw.Config(0, 0, 512, 512)
+
+func init() {
+	dbg.Log("main.go", "main()")
+	rand.Seed(time.Now().UTC().UnixNano())
+}
 
 func main() {
 
-	var isProduction = false
+	gw.RegisterCallback(onRender)
+	gw.RegisterCallback(onCursorMove)
+	gw.RegisterCallback(onKey)
+	gw.RegisterCallback(onFPS)
 
-	resPath := ""
-	if isProduction {
-		resPath = "/Applications/gwApp.app/Contents/Resources/"
-	} else {
-		resPath = "Resources/"
-	}
-
-	g.img1, _ = gw.GetImage(resPath + "k1.png")
-	g.img2, _ = gw.GetImage(resPath + "k2.png")
-
-	rand.Seed(time.Now().UTC().UnixNano())
-
-	g.wc = gw.WinConfig{
-		W: 8 * 64,
-		H: 8 * 64,
-		X: 0,
-		Y: 0,
-	}
-
-	gw.RegisterCallback("render", onRender)
-	gw.RegisterCallback("cursorMove", onCursorMove)
-	gw.RegisterCallback("key", onKey)
-	gw.RegisterCallback("fps", onFPS)
-
-	gw.SetDebug()
-	gw.Init(g.wc)
+	gw.Start()
 }
 
 func onFPS(fps int) {
-	fmt.Println("FPS:", fps)
-
+	if dbg.Profiling() {
+		dbg.Log("main.go", "onFPS()", "FPS:", fps)
+	}
 }
 
-func onKey(w *gw.Window, key gw.Key, scancode int, action gw.Action, mods gw.ModifierKey) {
+func onKey(w *glgw.Window, key glgw.Key, scancode int, action glgw.Action, mods glgw.ModifierKey) {
+	dbg.Log("main.go", "onKey()")
+
+	gw.SetPos(150, 150) // set new window position on key press
 
 	if action == 1 {
 		fmt.Print(w.GetSize())
@@ -66,16 +57,19 @@ func onKey(w *gw.Window, key gw.Key, scancode int, action gw.Action, mods gw.Mod
 	}
 }
 
-func onCursorMove(c gw.Cursor) {
+func onCursorMove(c glgw.Cursor) {
+	dbg.Log("main.go", "onCursorMove()")
 	g.cur = c
 }
 
 func onRender() *image.RGBA {
-	// fmt.Println("rendering")
+	if dbg.Profiling() {
+		dbg.Log("main.go", "onRender()")
+	}
 
 	// xCur, yCur := int(xCursor), int(yCursor)
 	var rgba = image.NewRGBA(image.Rect(0, 0, g.wc.W, g.wc.Y))
-	if gw.SetFrameToggle() {
+	if glgw.SetFrameToggle() {
 		rgba = g.img1
 	} else {
 		rgba = g.img2
